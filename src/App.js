@@ -1,26 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import axios from 'axios'
+import parse from 'html-react-parser'
+import './assets/css/js_composer.min.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+  //Constructor and init default state
+  constructor() {
+    super();
+    this.state = {
+        data:[]
+    }
 }
 
-export default App;
+// Function to receivedata from the endpoint
+receiveData(){
+  axios
+      .get(`http://localhost/dtgolf/wp-json/wp/v2/pages/128`, {})
+      .then(res => {
+          const data = res.data
+          console.log(data)
+          const content = parse(data.content.rendered)
+
+
+          this.setState({content})
+          
+})
+      .catch((error) => {
+          console.log(error)
+      })
+}
+
+//Calling the receiveData function inside lifecycle method
+componentDidMount(){
+  this.receiveData()
+}
+
+  render() {
+    return (
+      <div>
+       {this.state.content}
+      </div>
+    )
+  }
+}
+
